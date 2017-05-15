@@ -12,7 +12,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 extern const uint32_t DEFAULT_POOL_CHUNK_SIZE;
-extern const uint32_t DEFAULT_POOL_TABLE_SIZE;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +42,6 @@ void dump_raw_pool (Pool* pool);
 
 typedef struct MemoryManager {
     Pool* pool_list;
-    size_t table_size;
 } MemoryManager;
 
 MemoryManager memory_manager;

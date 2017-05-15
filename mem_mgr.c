@@ -10,11 +10,9 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const uint32_t DEFAULT_POOL_CHUNK_SIZE = 1; // Data in chunk
-const uint32_t DEFAULT_POOL_TABLE_SIZE = 1;
+const uint32_t DEFAULT_POOL_CHUNK_SIZE = 10; // Data in chunk
 
 void init_memory_manager() {
-    memory_manager.table_size = 0;
     memory_manager.pool_list = NULL;
 }
 
@@ -34,7 +32,7 @@ void terminate_memory_manager() {
 void* add_element(debug_typeid_t debug_typeid, size_t struct_size) {
     Pool* cur_pool = memory_manager.pool_list;
     size_t count = 0;
-    while (cur_pool && cur_pool->next_pool && count < memory_manager.table_size) {
+    while (cur_pool) {
         if (cur_pool->debug_typeid == debug_typeid)
             return add_element_to_pool(cur_pool);
         cur_pool = cur_pool->next_pool;
@@ -47,7 +45,6 @@ void* add_element(debug_typeid_t debug_typeid, size_t struct_size) {
         memory_manager.pool_list = new_pool;
     else
         cur_pool->next_pool = new_pool;
-    memory_manager.table_size++;
     return add_element_to_pool(new_pool);
 }
 
@@ -118,7 +115,7 @@ void* add_element_to_pool (Pool* pool) {
 }
 
 void dump_raw_pool(Pool *pool) {
-    printf("Pool start\n");
+    printf("Pool start: %d\n", pool->debug_typeid);
     PoolChunk* cur_chunk = pool->ptr_to_chunk;
     while (cur_chunk) {
         printf("Chunk start\n");
@@ -128,5 +125,5 @@ void dump_raw_pool(Pool *pool) {
         printf("Chunk end\n");
         cur_chunk = cur_chunk->next_chunk;
     }
-    printf("Pool end\n");
+    printf("Pool end: %d\n", pool->debug_typeid);
 }
