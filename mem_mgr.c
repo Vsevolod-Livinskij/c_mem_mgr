@@ -22,10 +22,12 @@ void terminate_memory_manager() {
     Pool* cur_pool = memory_manager.pool_list;
     Pool* next_pool = NULL;
     do {
-        if (cur_pool)
+        if (cur_pool) {
+            free_pool(cur_pool);
             next_pool = cur_pool->next_pool;
-        free_pool(cur_pool);
+        }
         free(cur_pool);
+        cur_pool = next_pool;
     } while (next_pool);
 }
 
@@ -73,6 +75,9 @@ Pool init_pool(debug_typeid_t debug_typeid, size_t data_size) {
 }
 
 void free_pool(Pool* pool) {
+    if (pool == NULL)
+        ERROR("pool is NULL");
+
     PoolChunk* cur_chunk = pool->ptr_to_chunk;
     PoolChunk* next_chunk = NULL;
     do {
@@ -81,12 +86,14 @@ void free_pool(Pool* pool) {
             next_chunk = cur_chunk->next_chunk;
         }
         free(cur_chunk);
-    } while (next_chunk);
+        cur_chunk = next_chunk;
+    } while (cur_chunk);
 }
 
 void* add_element_to_pool (Pool* pool) {
     if (pool->total_elem_num == pool->occupied_elem_num) {
-        PoolChunk* new_pool_chunk = calloc(DEFAULT_POOL_CHUNK_SIZE, pool->size_of_elem);
+        PoolChunk* new_pool_chunk = calloc(1, sizeof(PoolChunk));
+        new_pool_chunk->data = calloc(DEFAULT_POOL_CHUNK_SIZE, pool->size_of_elem);
         pool->ptr_to_last_chunk->next_chunk = new_pool_chunk;
         pool->ptr_to_last_chunk = new_pool_chunk;
         pool->total_elem_num += DEFAULT_POOL_CHUNK_SIZE;
@@ -116,7 +123,7 @@ void dump_raw_pool(Pool *pool) {
     while (cur_chunk) {
         printf("Chunk start\n");
         for (int i = 0; i < DEFAULT_POOL_CHUNK_SIZE * pool->size_of_elem; ++i) {
-            printf("%x\n", *(char*)(cur_chunk->data + i));
+            printf("%p : %x\n", cur_chunk->data, *(char*)(cur_chunk->data + i));
         }
         printf("Chunk end\n");
         cur_chunk = cur_chunk->next_chunk;
