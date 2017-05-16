@@ -11,8 +11,11 @@ int main () {
 //    dump_all_pools();
 //    a->memb1 = 0xAAAAAAAA;
 //    dump_all_pools();
-    for (int i = 0; i < 400; ++i) {
-        A_new();
+    for (int i = 0; i < 10; ++i) {
+        A* a = A_new();
+        a->memb1 = i;
+        B* b = B_new();
+        b->memb1 = 10 - i;
     }
     dump_all_pools();
     terminate_memory_manager();

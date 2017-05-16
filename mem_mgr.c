@@ -10,7 +10,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const uint32_t DEFAULT_POOL_CHUNK_SIZE = 10; // Data in chunk
+const uint32_t DEFAULT_POOL_CHUNK_SIZE = 6; // Data in chunk
 
 void init_memory_manager() {
     memory_manager.pool_list = NULL;
@@ -35,6 +35,8 @@ void* add_element(debug_typeid_t debug_typeid, size_t struct_size) {
     while (cur_pool) {
         if (cur_pool->debug_typeid == debug_typeid)
             return add_element_to_pool(cur_pool);
+        if (cur_pool->next_pool == NULL)
+            break;
         cur_pool = cur_pool->next_pool;
         count++;
     }
