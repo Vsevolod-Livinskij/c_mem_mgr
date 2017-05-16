@@ -5,6 +5,7 @@
 #ifndef C_MEM_MGR_MEM_MGR_H
 #define C_MEM_MGR_MEM_MGR_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #include "util.h"
@@ -35,6 +36,8 @@ typedef struct Pool {
 Pool init_pool (debug_typeid_t debug_typeid, size_t data_size);
 void free_pool (Pool* pool);
 void* add_element_to_pool (Pool* pool);
+void remove_element_from_pool (Pool* pool, void* ptr_to_struct);
+bool is_ptr_belongs_to_pool (Pool* pool, void* ptr_to_struct);
 
 void dump_raw_pool (Pool* pool);
 
@@ -49,7 +52,8 @@ MemoryManager memory_manager;
 void init_memory_manager ();
 void terminate_memory_manager ();
 void* add_element (debug_typeid_t debug_typeid, size_t struct_size);
-
+void remove_element (debug_typeid_t debug_typeid, void* ptr_to_struct);
+bool is_ptr_in_use (debug_typeid_t debug_typeid, void* ptr_to_struct);
 
 void dump_all_pools();
 
