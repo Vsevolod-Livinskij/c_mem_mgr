@@ -17,8 +17,8 @@ extern const debug_typeid_t B_debug_typeid;
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct A {
-    debug_typeid_t debug_typeid;
     int memb1;
+    debug_typeid_t debug_typeid;
 } A;
 
 A* A_new ();
@@ -30,8 +30,8 @@ bool are_ptrs_to_A_equal(A* ptr1, A* ptr2);
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct B {
-    debug_typeid_t debug_typeid;
     uint64_t memb1;
+    debug_typeid_t debug_typeid;
 } B;
 
 B* B_new ();

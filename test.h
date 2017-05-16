@@ -16,5 +16,6 @@ void test_5 (); // Ptr comparison
 void test_6 (); // Ptr arithmetic
 void test_7 (); // Malloc without free
 void test_8 (); // Init and terminate
+void test_9 (); // Massive usage
 
 #endif //C_MEM_MGR_TEST_H

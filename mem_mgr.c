@@ -15,6 +15,8 @@
 #define GET_DATA_PTR(ptr) (ptr + sizeof(bool) + sizeof(uint32_t))
 #define GET_END_BUF(ptr, pool) (*(int *) (ptr + (pool->size_of_elem - sizeof(uint32_t))))
 
+const uint32_t guard_value = 0xDEADBEEF;
+
 const uint32_t DEFAULT_POOL_CHUNK_SIZE = 3; // Data in chunk
 
 void init_memory_manager() {
@@ -144,8 +146,8 @@ void* add_element_to_pool (Pool* pool) {
             ret = cur_chunk->data + pool->size_of_elem * i;
             if (!GET_IS_OCCUPIED(ret)) {
                 GET_IS_OCCUPIED(ret) = true;
-                GET_START_BUF(ret) = 0xDEADBEEF;
-                GET_END_BUF(ret, pool) = 0xDEADBEEF;
+                GET_START_BUF(ret) = guard_value;
+                GET_END_BUF(ret, pool) = guard_value;
                 pool->occupied_elem_num++;
                 return GET_DATA_PTR(ret);
             }
@@ -205,6 +207,9 @@ bool is_ptr_belongs_to_pool(Pool *pool, void *ptr_to_struct) {
         for (int i = 0; i < DEFAULT_POOL_CHUNK_SIZE; ++i) {
             cur_ptr = cur_chunk->data + pool->size_of_elem * i;
             if (GET_IS_OCCUPIED(cur_ptr) && GET_DATA_PTR(cur_ptr) == ptr_to_struct) {
+                if (GET_START_BUF(cur_ptr)     != guard_value ||
+                    GET_END_BUF(cur_ptr, pool) != guard_value)
+                    ERROR_AND_ABORT("Corrupted guard buffers");
                 return true;
             }
         }
